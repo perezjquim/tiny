@@ -27,8 +27,7 @@ public class BookmarkCardView extends CardView
     private int id;
     private String url;
 
-    private static final int PADDING_LEFT_RIGHT = 10;
-    private static final int PADDING_TOP_BOTTOM = 50;
+    private static final int PADDING = 20;
 
     private static final int POS_LABEL = 0;
 
@@ -41,11 +40,7 @@ public class BookmarkCardView extends CardView
         this.id = id;
         this.url = url;
 
-        setContentPadding(
-                PADDING_LEFT_RIGHT,
-                PADDING_TOP_BOTTOM,
-                PADDING_LEFT_RIGHT,
-                PADDING_TOP_BOTTOM);
+        setContentPadding(PADDING, PADDING, PADDING, PADDING);
 
         setOnClickListener((v) ->
         {
