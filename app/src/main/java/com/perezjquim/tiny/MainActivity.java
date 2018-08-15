@@ -7,13 +7,11 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -22,6 +20,7 @@ import android.widget.FrameLayout;
 
 import com.perezjquim.PermissionChecker;
 import com.perezjquim.SharedPreferencesHelper;
+import com.perezjquim.tiny.db.DatabaseManager;
 
 import static com.perezjquim.UIHelper.askBinary;
 import static com.perezjquim.UIHelper.askString;
@@ -38,6 +37,8 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         PermissionChecker.init(this);
+        DatabaseManager.initDatabase();
+
         setContentView(R.layout.activity_main);
         getWindow().getDecorView().setBackgroundColor(Color.BLACK);
         super.setTheme(android.R.style.Theme_DeviceDefault_NoActionBar);
@@ -92,8 +93,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url)
             {
-                view.loadUrl(url);
-                eUrl.setText(url);
+                loadUrl(url);
                 return false;
             }
 
@@ -110,31 +110,13 @@ public class MainActivity extends AppCompatActivity
                 super.onPageFinished(view, url);
                 closeProgressDialog();
             }
-
-            @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error)
-            {
-                super.onReceivedError(view, request, error);
-                closeProgressDialog();
-            }
-
-            @Override
-            public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse)
-            {
-                super.onReceivedHttpError(view, request, errorResponse);
-                closeProgressDialog();
-            }
         });
 
 
         eUrl.setOnEditorActionListener((text,id,event) ->
         {
             String url = text.getText()+"";
-            if(!url.contains("http://"))
-            {
-                url = "http://" + url;
-            }
-            wWeb.loadUrl(url);
+            loadUrl(url);
             return true;
         });
 
@@ -143,8 +125,7 @@ public class MainActivity extends AppCompatActivity
         String prev_url = prefs.getString("config","prev_url");
         if(prev_url != null)
         {
-            wWeb.loadUrl(prev_url);
-            eUrl.setText(prev_url);
+            loadUrl(prev_url);
         }
     }
 
@@ -158,6 +139,17 @@ public class MainActivity extends AppCompatActivity
                 PermissionChecker.restart();
                 break;
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent)
+    {
+        super.onNewIntent(intent);
+        setIntent(intent);
+
+        String url = intent.getStringExtra("bookmark_url");
+
+        loadUrl(url);
     }
 
     @Override
@@ -176,6 +168,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onPause()
+    {
+        super.onPause();
+
+        WebView wWeb = findViewById(R.id.web);
+
+        SharedPreferencesHelper prefs = new SharedPreferencesHelper(this);
+        prefs.setString("config","prev_url",wWeb.getUrl());
+    }
+
+    @Override
     public void onStop()
     {
         super.onStop();
@@ -184,6 +187,17 @@ public class MainActivity extends AppCompatActivity
 
         SharedPreferencesHelper prefs = new SharedPreferencesHelper(this);
         prefs.setString("config","prev_url",wWeb.getUrl());
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if (keyCode == KeyEvent.KEYCODE_MENU)
+        {
+            startActivity(new Intent(this,BookmarksActivity.class));
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     public void onRefresh(View v)
@@ -196,8 +210,21 @@ public class MainActivity extends AppCompatActivity
     {
         askString(this,"Search", "Type in your search below:",(s) ->
         {
-            WebView wWeb = findViewById(R.id.web);
-            wWeb.loadUrl("http://www.google.com/search?q="+s);
+            loadUrl("http://www.google.com/search?q="+s);
         });
+    }
+
+    private void loadUrl(String url)
+    {
+        if(!url.startsWith("http://") && !url.startsWith("https://"))
+        {
+            url = "http://" + url;
+        }
+
+        WebView wWeb = findViewById(R.id.web);
+        wWeb.loadUrl(url);
+
+        EditText eUrl = findViewById(R.id.url);
+        eUrl.setText(url);
     }
 }

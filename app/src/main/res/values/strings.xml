@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">tiny</string>
+    <string name="title_bookmarks">Bookmarks</string>
     <string name="url_bar">URL</string>
+    <string name="hint_url">URL (e.g. google.pt)</string>
+    <string name="hint_name">Name (e.g. Google)</string>
 </resources>
