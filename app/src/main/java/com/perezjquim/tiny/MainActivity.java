@@ -24,6 +24,7 @@ import com.perezjquim.PermissionChecker;
 import com.perezjquim.SharedPreferencesHelper;
 
 import static com.perezjquim.UIHelper.askBinary;
+import static com.perezjquim.UIHelper.askString;
 import static com.perezjquim.UIHelper.closeProgressDialog;
 import static com.perezjquim.UIHelper.hide;
 import static com.perezjquim.UIHelper.openProgressDialog;
@@ -43,7 +44,6 @@ public class MainActivity extends AppCompatActivity
 
         WebView wWeb = findViewById(R.id.web);
         EditText eUrl = findViewById(R.id.url);
-        EditText eSearch = findViewById(R.id.search);
 
         Activity self = this;
 
@@ -138,12 +138,6 @@ public class MainActivity extends AppCompatActivity
             return true;
         });
 
-        eSearch.setOnEditorActionListener((text,id,event) ->
-        {
-            wWeb.loadUrl("http://www.google.com/search?q="+text.getText());
-            return true;
-        });
-
         SharedPreferencesHelper prefs = new SharedPreferencesHelper(this);
 
         String prev_url = prefs.getString("config","prev_url");
@@ -196,5 +190,14 @@ public class MainActivity extends AppCompatActivity
     {
         WebView wWeb = findViewById(R.id.web);
         wWeb.reload();
+    }
+
+    public void onSearch(View v)
+    {
+        askString(this,"Search", "Type in your search below:",(s) ->
+        {
+            WebView wWeb = findViewById(R.id.web);
+            wWeb.loadUrl("http://www.google.com/search?q="+s);
+        });
     }
 }
