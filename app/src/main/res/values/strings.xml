@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">tiny</string>
+    <string name="url_bar">URL</string>
 </resources>
