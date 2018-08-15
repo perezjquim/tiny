@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -16,13 +18,16 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 
 import com.perezjquim.PermissionChecker;
 import com.perezjquim.SharedPreferencesHelper;
 
 import static com.perezjquim.UIHelper.askBinary;
 import static com.perezjquim.UIHelper.closeProgressDialog;
+import static com.perezjquim.UIHelper.hide;
 import static com.perezjquim.UIHelper.openProgressDialog;
+import static com.perezjquim.UIHelper.show;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -33,7 +38,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         PermissionChecker.init(this);
         setContentView(R.layout.activity_main);
-        super.setTheme(android.R.style.Theme_Black_NoTitleBar);
+        getWindow().getDecorView().setBackgroundColor(Color.BLACK);
+        super.setTheme(android.R.style.Theme_DeviceDefault_NoActionBar);
 
         WebView wWeb = findViewById(R.id.web);
         EditText eUrl = findViewById(R.id.url);
@@ -46,8 +52,40 @@ public class MainActivity extends AppCompatActivity
         WebSettings settings = wWeb.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setPluginState(WebSettings.PluginState.ON_DEMAND);
+        settings.setSavePassword(false);
 
-        wWeb.setWebChromeClient(new WebChromeClient());
+        wWeb.setWebChromeClient(new WebChromeClient()
+        {
+            private View view;
+            private WebChromeClient.CustomViewCallback callback;
+
+            public void onHideCustomView()
+            {
+                ((FrameLayout)getWindow().getDecorView()).removeView(this.view);
+                show(findViewById(R.id.main));
+                this.view = null;
+                this.callback.onCustomViewHidden();
+            }
+
+            public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback)
+            {
+                if (this.view != null)
+                {
+                    onHideCustomView();
+                }
+                else
+                {
+                    this.view = view;
+                    this.callback = callback;
+                    ((FrameLayout)getWindow().getDecorView()).addView(
+                            this.view,
+                            new FrameLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.MATCH_PARENT));
+                    hide(findViewById(R.id.main));
+                }
+            }
+        });
 
         wWeb.setWebViewClient(new WebViewClient()
         {
@@ -144,9 +182,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onPause()
+    public void onStop()
     {
-        super.onPause();
+        super.onStop();
 
         WebView wWeb = findViewById(R.id.web);
 
