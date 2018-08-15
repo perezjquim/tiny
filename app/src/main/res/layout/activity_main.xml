@@ -5,17 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center_horizontal"
+    android:gravity="center_horizontal|top"
     tools:context="com.perezjquim.tiny.MainActivity">
 
     <EditText
+        android:id="@+id/url"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.1"
-        android:id="@+id/url"
+        android:gravity="center"
         android:imeOptions="actionDone"
-        android:inputType="text"
-        android:singleLine="true"/>
+        android:singleLine="true" />
 
     <WebView
         android:layout_width="match_parent"
