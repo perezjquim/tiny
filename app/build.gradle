@@ -29,6 +29,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.github.perezjquim:permissionchecker:master-SNAPSHOT'
-    implementation 'com.github.perezjquim:uihelper:master-SNAPSHOT'
+    implementation ('com.github.perezjquim:uihelper:master-SNAPSHOT') { changing = true }
     implementation 'com.github.perezjquim:sharedprefhelper:master-SNAPSHOT'
 }
