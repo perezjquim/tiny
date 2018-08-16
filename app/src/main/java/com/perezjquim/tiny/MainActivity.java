@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
         getWindow().getDecorView().setBackgroundColor(Color.BLACK);
-        super.setTheme(android.R.style.Theme_DeviceDefault_NoActionBar);
+        super.setTheme(R.style.Theme_AppCompat_NoActionBar);
 
         WebView wWeb = findViewById(R.id.web);
         EditText eUrl = findViewById(R.id.url);
@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity
         settings.setJavaScriptEnabled(true);
         settings.setPluginState(WebSettings.PluginState.ON_DEMAND);
         settings.setSavePassword(false);
+        settings.setGeolocationEnabled(false);
+        settings.setSaveFormData(true);
 
         wWeb.setWebChromeClient(new WebChromeClient()
         {
