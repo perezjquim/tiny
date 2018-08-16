@@ -1,8 +1,11 @@
 package com.perezjquim.tiny;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -63,5 +66,18 @@ public class BookmarksActivity extends AppCompatActivity
 
             toast(this,"Bookmark created!");
         });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if (keyCode == KeyEvent.KEYCODE_MENU)
+        {
+            Intent i = new Intent(this, MainActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivityIfNeeded(i, 0);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

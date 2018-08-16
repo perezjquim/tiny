@@ -120,7 +120,9 @@ public abstract class DatabaseManager
     }
     public static void updateBookmark(int id, String name, String url)
     {
-        query(SQL_DELETE_BOOKMARK
-                .replace("%id%",""+id));
+        query(SQL_UPDATE_BOOKMARK
+                .replace("%id%",""+id)
+                .replace("%name%",name)
+                .replace("%url%",url));
     }
 }

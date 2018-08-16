@@ -151,7 +151,10 @@ public class MainActivity extends AppCompatActivity
 
         String url = intent.getStringExtra("bookmark_url");
 
-        loadUrl(url);
+        if(url != null)
+        {
+            loadUrl(url);
+        }
     }
 
     @Override
