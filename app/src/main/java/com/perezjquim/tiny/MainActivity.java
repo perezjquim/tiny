@@ -38,10 +38,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         PermissionChecker.init(this);
         DatabaseManager.initDatabase();
+        super.setTheme(R.style.AppTheme);
 
         setContentView(R.layout.activity_main);
         getWindow().getDecorView().setBackgroundColor(Color.BLACK);
-        super.setTheme(R.style.Theme_AppCompat_NoActionBar);
 
         WebView wWeb = findViewById(R.id.web);
         EditText eUrl = findViewById(R.id.url);
