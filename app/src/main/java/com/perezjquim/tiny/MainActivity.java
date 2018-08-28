@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
                 ((FrameLayout)getWindow().getDecorView()).removeView(this.view);
                 show(findViewById(R.id.main));
                 this.view = null;
-                this.callback.onCustomViewHidden();
+                if(this.callback != null) this.callback.onCustomViewHidden();
             }
 
             public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback)
@@ -176,23 +176,23 @@ public class MainActivity extends AppCompatActivity
     public void onPause()
     {
         super.onPause();
-
-        WebView wWeb = findViewById(R.id.web);
-
-        SharedPreferencesHelper prefs = new SharedPreferencesHelper(this);
-        prefs.setString("config","prev_url",wWeb.getUrl());
+        registerLastPage();
     }
 
     @Override
     public void onStop()
     {
         super.onStop();
-
-        WebView wWeb = findViewById(R.id.web);
-
-        SharedPreferencesHelper prefs = new SharedPreferencesHelper(this);
-        prefs.setString("config","prev_url",wWeb.getUrl());
+        registerLastPage();
     }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        registerLastPage();
+    }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
@@ -203,6 +203,14 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    private void registerLastPage()
+    {
+        WebView wWeb = findViewById(R.id.web);
+
+        SharedPreferencesHelper prefs = new SharedPreferencesHelper(this);
+        prefs.setString("config","prev_url",wWeb.getUrl());
     }
 
     public void onRefresh(View v)
