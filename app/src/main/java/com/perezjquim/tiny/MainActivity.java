@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
         getWindow().getDecorView().setBackgroundColor(Color.BLACK);
+
+        SwipeRefreshLayout lRefresh = findViewById(R.id.swiperefresh);
+        lRefresh.setOnRefreshListener(this::onRefresh);
 
         WebView wWeb = findViewById(R.id.web);
         EditText eUrl = findViewById(R.id.url);
@@ -110,10 +114,9 @@ public class MainActivity extends AppCompatActivity
             public void onPageFinished(WebView view, String url)
             {
                 super.onPageFinished(view, url);
-                closeProgressDialog();
+                closeProgressDialog(self);
             }
         });
-
 
         eUrl.setOnEditorActionListener((text,id,event) ->
         {
@@ -124,10 +127,19 @@ public class MainActivity extends AppCompatActivity
 
         SharedPreferencesHelper prefs = new SharedPreferencesHelper(this);
 
-        String prev_url = prefs.getString("config","prev_url");
-        if(prev_url != null)
+        Intent i = getIntent();
+        String action = i.getAction();
+        if(action != null && action.equals(Intent.ACTION_VIEW))
         {
-            loadUrl(prev_url);
+            if(i.getDataString() != null) loadUrl(i.getDataString());
+        }
+        else
+        {
+            String prev_url = prefs.getString("config","prev_url");
+            if(prev_url != null)
+            {
+                loadUrl(prev_url);
+            }
         }
     }
 
@@ -213,7 +225,7 @@ public class MainActivity extends AppCompatActivity
         prefs.setString("config","prev_url",wWeb.getUrl());
     }
 
-    public void onRefresh(View v)
+    public void onRefresh()
     {
         WebView wWeb = findViewById(R.id.web);
         wWeb.reload();
