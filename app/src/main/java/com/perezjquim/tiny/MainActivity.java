@@ -229,6 +229,9 @@ public class MainActivity extends AppCompatActivity
     {
         WebView wWeb = findViewById(R.id.web);
         wWeb.reload();
+
+        SwipeRefreshLayout lRefresh = findViewById(R.id.swiperefresh);
+        lRefresh.setRefreshing(false);
     }
 
     public void onSearch(View v)
